@@ -1,11 +1,24 @@
-from flask import Flask
+from flask import Flask, request, make_response
+import os
 
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route("/users", methods=['GET'])
 def hello_world():
-    return "<p>Hello, World!</p>"
+    path = 'users'
+
+    files = os.listdir(path)
+    obj = {"users": {}}
+    for name in files:
+        with open(f"users/{name}") as test:
+            data = test.read()
+            obj["users"][os.path.splitext(name)[0]] = {
+                    "firstname": data.split("\n")[0],
+                    "lastname": data.split("\n")[1]
+                 }
+
+    return obj
 
 
 if __name__ == '__main__':
